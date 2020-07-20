@@ -330,7 +330,7 @@ namespace JsonConfig
             // 根节点的key为空
             ConfigNode root = new ConfigNode(ConfigNodeType.ConfigNodes, string.Empty);
 
-            if (reader.IsFinalBlock || !reader.Read())
+            if (!reader.Read())
             {
                 return root;
             }
