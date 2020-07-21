@@ -287,6 +287,33 @@ namespace JsonConfig
         }
 
         /// <summary>
+        /// 清除配置
+        /// </summary>
+        public void ClearConfig()
+        {
+            switch (this.Type)
+            {
+                case ConfigNodeType.Number:
+                    this.numberValue = default;
+                    break;
+                case ConfigNodeType.Text:
+                    this.textValue = string.Empty;
+                    break;
+                case ConfigNodeType.Boolean:
+                    this.booleanValue = default;
+                    break;
+                case ConfigNodeType.Array:
+                    this.arrayValue.Clear();
+                    break;
+                case ConfigNodeType.ConfigNodes:
+                    this.configNodesValue.Clear();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
         /// 依据数组下标获取配置对象
         /// </summary>
         /// <param name="index"></param>
@@ -351,30 +378,6 @@ namespace JsonConfig
             }
 
             return root;
-        }
-
-        private void ClearConfig()
-        {
-            switch (this.Type)
-            {
-                case ConfigNodeType.Number:
-                    this.numberValue = default;
-                    break;
-                case ConfigNodeType.Text:
-                    this.textValue = string.Empty;
-                    break;
-                case ConfigNodeType.Boolean:
-                    this.booleanValue = default;
-                    break;
-                case ConfigNodeType.Array:
-                    this.arrayValue.Clear();
-                    break;
-                case ConfigNodeType.ConfigNodes:
-                    this.configNodesValue.Clear();
-                    break;
-                default:
-                    break;
-            }
         }
 
         #endregion
