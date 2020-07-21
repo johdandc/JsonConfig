@@ -330,19 +330,51 @@ namespace JsonConfig
             // 根节点的key为空
             ConfigNode root = new ConfigNode(ConfigNodeType.ConfigNodes, string.Empty);
 
-            if (!reader.Read())
+            try
             {
-                return root;
+                if (!reader.Read())
+                {
+                    return root;
+                }
+
+                Debug.Assert(reader.TokenType == JsonTokenType.StartObject);
+
+                if (!root.TryParse(ref reader))
+                {
+                    root.ClearConfig();
+                    return root;
+                }
             }
-
-            Debug.Assert(reader.TokenType == JsonTokenType.StartObject);
-
-            if (!root.TryParse(ref reader))
+            catch (JsonException)
             {
-                return root;
+                root.ClearConfig();
             }
 
             return root;
+        }
+
+        private void ClearConfig()
+        {
+            switch (this.Type)
+            {
+                case ConfigNodeType.Number:
+                    this.numberValue = default;
+                    break;
+                case ConfigNodeType.Text:
+                    this.textValue = string.Empty;
+                    break;
+                case ConfigNodeType.Boolean:
+                    this.booleanValue = default;
+                    break;
+                case ConfigNodeType.Array:
+                    this.arrayValue.Clear();
+                    break;
+                case ConfigNodeType.ConfigNodes:
+                    this.configNodesValue.Clear();
+                    break;
+                default:
+                    break;
+            }
         }
 
         #endregion
@@ -450,7 +482,10 @@ namespace JsonConfig
                 }
 
                 // 先读到PropertyName
-                Debug.Assert(reader.TokenType == JsonTokenType.PropertyName);
+                if(reader.TokenType != JsonTokenType.PropertyName)
+                {
+                    break;
+                }
 
                 string key = reader.GetString();
 
